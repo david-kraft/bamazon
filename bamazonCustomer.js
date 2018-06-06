@@ -22,7 +22,6 @@ con.connect(function (err) {
 
 con.query("SELECT * from products;", function (err, res) {
   if (err) throw err;
-  console.log(res);
 
   // Create a CLI table
   var table = new Table({
@@ -52,21 +51,69 @@ con.query("SELECT * from products;", function (err, res) {
   // Log the table
   console.log(table.toString());
 
-  // Write inquirer code that asks customer what they would like to buy.
 
-  
+  inquirer
+    .prompt([
 
-  // Ask user how many they'd like to buy.
-  // Based on user input, select the relevant columns where the id = the user input
-  // 
+      // Write inquirer code that asks customer what they would like to buy.
+      {
+        type: "input",
+        name: "productReq",
+        message: "What would you like to buy? Enter the product's ID from the inventory table above."
+      },
 
-  // check to see if there is enough quantity in stock
-  // if the item is not in stock
-  //   // console log "Item is out of stock!"
-  // else
-  //   // update database with new quantity and either exit or return to the main menu.
+      // Here we ask the user to confirm.
+      {
+        type: "confirm",
+        message: "Are you sure:",
+        name: "confirm",
+        default: true
+      },
 
-  // }
+      // Ask user how many they'd like to buy.
+      {
+        type: "input",
+        name: "quantityReq",
+        message: "How much of this item do you want to get? Enter an integer."
+      },
+
+      // Here we ask the user to confirm.
+      {
+        type: "confirm",
+        message: "Are you sure:",
+        name: "confirm",
+        default: true
+      }
+
+    ])
+    .then(function (inquirerRes) {
+      var chosenItem;
+      chosenItem = res[inquirerRes.productReq]
+
+      if (chosenItem.stock_quantity >= inquirerRes.quantityRequest) {
+        console.log("We have enough in stock! We will ship your item!")
+        con.query(
+          "UPDATE products SET ? WHERE ?",
+          [
+            {
+              stock_quantity: chosenItem.stock_quantity - inquirerRes.quantityRequest
+            },
+            {
+              id: chosenItem.item_id
+            }
+          ],
+          function (error) {
+            if (error) throw err;
+            console.log("Bid placed successfully!");
+            start();
+          }
+        )
+      } else {
+        // Not enough stock message
+        console.log("I don't have enough in stock to fulfill your order.");
+      }
+    }
+    );
+
+
 });
-
-
