@@ -88,30 +88,31 @@ con.query("SELECT * from products;", function (err, res) {
     ])
     .then(function (inquirerRes) {
       var chosenItem;
-      chosenItem = res[inquirerRes.productReq]
-        console.log("Remaining stock: " + chosenItem.stock_quantity)
-        console.log("Requested number: " + inquirerRes.quantityReq)
+      chosenItem = res[inquirerRes.productReq - 1]
+      console.log("Remaining stock: " + chosenItem.stock_quantity)
+      console.log("Requested number: " + inquirerRes.quantityReq)
       if (chosenItem.stock_quantity >= inquirerRes.quantityReq) {
-        console.log("We have enough in stock! We will ship your item!")
+        console.log("We have enough in stock! We will ship your item! Press ^C to escape to bash.")
+
+        var remainingStock = chosenItem.stock_quantity - inquirerRes.quantityReq;
+
         con.query(
           "UPDATE products SET ? WHERE ?",
           [
             {
-              stock_quantity: chosenItem.stock_quantity - inquirerRes.quantityRequest
+              stock_quantity: remainingStock
             },
             {
-              id: chosenItem.item_id
+              item_id: chosenItem.item_id
             }
           ],
           function (error) {
             if (error) throw err;
-            console.log("Bid placed successfully!");
-            start();
           }
         )
       } else {
         // Not enough stock message
-        console.log("I don't have enough in stock to fulfill your order.");
+        console.log("I don't have enough in stock to fulfill your order. Press ^C to escape to bash.");
       }
     }
     );
