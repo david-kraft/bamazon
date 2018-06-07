@@ -89,8 +89,9 @@ con.query("SELECT * from products;", function (err, res) {
     .then(function (inquirerRes) {
       var chosenItem;
       chosenItem = res[inquirerRes.productReq]
-
-      if (chosenItem.stock_quantity >= inquirerRes.quantityRequest) {
+        console.log("Remaining stock: " + chosenItem.stock_quantity)
+        console.log("Requested number: " + inquirerRes.quantityReq)
+      if (chosenItem.stock_quantity >= inquirerRes.quantityReq) {
         console.log("We have enough in stock! We will ship your item!")
         con.query(
           "UPDATE products SET ? WHERE ?",
