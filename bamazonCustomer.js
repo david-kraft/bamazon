@@ -5,13 +5,13 @@ var Table = require("cli-table");
 // create the connection information for the sql database
 var con = mysql.createConnection({
   host: "localhost",
-  port: 3306,
+  port: 8889,
 
   // Your username
   user: "root",
 
   // Your password
-  password: "password",
+  password: "root",
   database: "bamazon"
 });
 
@@ -59,7 +59,7 @@ con.query("SELECT * from products;", function (err, res) {
       {
         type: "input",
         name: "productReq",
-        message: "What would you like to buy? Enter the product's ID from the inventory table above."
+        message: "What would you like to buy? Enter the product's ID from the inventory table\n above."
       },
 
       // Here we ask the user to confirm.
